@@ -5,6 +5,14 @@ use nom::types::CompleteStr;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 
+/**
+    Amidst the chaos, you notice that exactly one claim doesn't overlap by even a single square inch of fabric with any other claim. If you can somehow draw attention to it, maybe the Elves will be able to make Santa's suit after all!
+
+    For example, in the claims above, only claim 3 is intact after all claims are made.
+
+    What is the ID of the only claim that doesn't overlap?
+*/
+
 #[derive(Debug)]
 pub struct Claim {
     pub id: u32,
@@ -30,7 +38,7 @@ named!(claim<CompleteStr, Claim>,
     do_parse!(
             tag!("#") >>
         id: integer >>
-             tag!(" @ ") >>
+            tag!(" @ ") >>
         x:  integer >>
             tag!(",") >>
         y:  integer >>
