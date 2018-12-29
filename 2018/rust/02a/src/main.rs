@@ -21,7 +21,6 @@ use std::collections::HashMap;
     abcdee contains two e.
     ababab contains three a and three b, but it only counts once.
     Of these box IDs, four of them contain a letter which appears exactly twice, and three of them contain a letter which appears exactly three times. Multiplying these together produces a checksum of 4 * 3 = 12.
-
     What is the checksum for your list of box IDs?
 */
 
@@ -36,11 +35,11 @@ fn main() -> std::io::Result<()> {
             *count += 1;
         }
 
-        if letters.values().find(|&val| *val == 2).is_some() {
+        if letters.values().any(|&val| val == 2) {
             two += 1;
         }
 
-        if letters.values().find(|&val| *val == 3).is_some() {
+        if letters.values().any(|&val| val == 3) {
             three += 1;
         }
     }
