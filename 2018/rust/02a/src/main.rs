@@ -1,5 +1,3 @@
-use std::fs::File;
-use std::io::{BufRead, BufReader, Result};
 use std::collections::HashMap;
 
 /**
@@ -27,13 +25,13 @@ use std::collections::HashMap;
     What is the checksum for your list of box IDs?
 */
 
-fn main() -> Result<()> {
-    let file = File::open("input")?;
-    let mut two : u32 = 0;
-    let mut three : u32 = 0;
-    for line in BufReader::new(file).lines() {
+fn main() -> std::io::Result<()> {
+    let file = include_str!("../input");
+    let mut two: u32 = 0;
+    let mut three: u32 = 0;
+    for line in file.lines() {
         let mut letters = HashMap::new();
-        for letter in line.unwrap().chars() {
+        for letter in line.chars() {
             let count = letters.entry(letter).or_insert(0);
             *count += 1;
         }
@@ -49,7 +47,7 @@ fn main() -> Result<()> {
 
     println!("Exactly two: {:?}", two);
     println!("Exactly three: {:?}", three);
-    println!("Checksum: {:?}", two*three);
+    println!("Checksum: {:?}", two * three);
 
     Ok(())
 }

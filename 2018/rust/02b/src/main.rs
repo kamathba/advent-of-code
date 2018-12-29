@@ -1,6 +1,3 @@
-use std::fs::File;
-use std::io::{BufRead, BufReader, Result};
-
 /**
     Confident that your list of box IDs is complete, you're ready to find the boxes full of prototype fabric.
 
@@ -18,11 +15,11 @@ use std::io::{BufRead, BufReader, Result};
     What letters are common between the two correct box IDs? (In the example above, this is found by removing the differing character from either ID, producing fgij.)
 */
 
-fn main() -> Result<()> {
-    let file = File::open("input")?;
+fn main() -> std::io::Result<()> {
+    let file = include_str!("../input");
     let mut vec = Vec::new();
-    for line in BufReader::new(file).lines() {
-        vec.push(line.unwrap());
+    for line in file.lines() {
+        vec.push(line);
     }
 
     println!("{} lines in input", vec.len());
@@ -45,7 +42,7 @@ fn main() -> Result<()> {
                 }
             }
 
-            let mut answer = vec[i].clone();
+            let mut answer = String::from(vec[i]);
             answer.remove(index.unwrap());
 
             println!("i: {}, j: {}", i, j);

@@ -2,8 +2,6 @@
 extern crate nom;
 
 use nom::types::CompleteStr;
-use std::fs::File;
-use std::io::{BufRead, BufReader};
 
 /**
     Amidst the chaos, you notice that exactly one claim doesn't overlap by even a single square inch of fabric with any other claim. If you can somehow draw attention to it, maybe the Elves will be able to make Santa's suit after all!
@@ -51,12 +49,12 @@ named!(claim<CompleteStr, Claim>,
 );
 
 fn main() -> Result<(), std::io::Error> {
-    let file = File::open("input")?;
+    let file = include_str!("../input");
     let mut fabric = [[0u32; 1000]; 1000];
     let mut claims: Vec<Claim> = Vec::new();
 
-    for line in BufReader::new(file).lines() {
-        let (_, claim) = claim(CompleteStr(&line.unwrap())).unwrap();
+    for line in file.lines() {
+        let (_, claim) = claim(CompleteStr(line)).unwrap();
         claims.push(claim);
     }
 

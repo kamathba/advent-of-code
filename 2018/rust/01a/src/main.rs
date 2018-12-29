@@ -1,6 +1,3 @@
-use std::fs::File;
-use std::io::{BufRead, BufReader, Result};
-
 /**
     --- Day 1: Chronal Calibration ---
     "We've detected some temporal anomalies," one of Santa's Elves at the Temporal Anomaly Research and Detection Instrument Station tells you. She sounded pretty worried when she called you down here. "At 500-year intervals into the past, someone has been changing Santa's history!"
@@ -29,14 +26,11 @@ use std::io::{BufRead, BufReader, Result};
     Starting with a frequency of zero, what is the resulting frequency after all of the changes in frequency have been applied?
 */
 
-fn main() -> Result<()> {
-    let file = File::open("input")?;
+fn main() -> std::io::Result<()> {
+    let file = include_str!("../input");
     let mut sum: i32 = 0;
-    for line in BufReader::new(file).lines() {
-        let value = line
-            .unwrap()
-            .parse::<i32>()
-            .expect("Expected lines to be ints");
+    for line in file.lines() {
+        let value = line.parse::<i32>().expect("Expected lines to be ints");
         sum += value;
     }
 

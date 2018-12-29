@@ -2,8 +2,6 @@
 extern crate nom;
 
 use nom::types::CompleteStr;
-use std::fs::File;
-use std::io::{BufRead, BufReader};
 
 /**
     The Elves managed to locate the chimney-squeeze prototype fabric for Santa's suit (thanks to someone who helpfully wrote its box IDs on the wall of the warehouse in the middle of the night). Unfortunately, anomalies are still affecting them - nobody can even agree on how to cut the fabric.
@@ -85,12 +83,12 @@ named!(claim<CompleteStr, Claim>,
 );
 
 fn main() -> Result<(), std::io::Error> {
-    let file = File::open("input")?;
+    let file = include_str!("../input");
     let mut fabric = [[0u32; 1000]; 1000];
     let mut overlap: u32 = 0;
 
-    for line in BufReader::new(file).lines() {
-        let (_, claim) = claim(CompleteStr(&line.unwrap())).unwrap();
+    for line in file.lines() {
+        let (_, claim) = claim(CompleteStr(line)).unwrap();
 
         for i in 0..claim.width {
             for j in 0..claim.height {

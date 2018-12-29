@@ -1,6 +1,4 @@
 use std::collections::HashSet;
-use std::fs::File;
-use std::io::{BufRead, BufReader, Result};
 
 /**
     You notice that the device repeats the same frequency change list over and over. To calibrate the device, you need to find the first frequency it reaches twice.
@@ -25,17 +23,14 @@ use std::io::{BufRead, BufReader, Result};
     What is the first frequency your device reaches twice?
 */
 
-fn main() -> Result<()> {
+fn main() -> std::io::Result<()> {
     let mut freqs = HashSet::new();
     let mut sum: i32 = 0;
 
+    let file = include_str!("../input");
     loop {
-        let file = File::open("input")?;
-        for line in BufReader::new(file).lines() {
-            let value = line
-                .unwrap()
-                .parse::<i32>()
-                .expect("Expected lines to be ints");
+        for line in file.lines() {
+            let value = line.parse::<i32>().expect("Expected lines to be ints");
             sum += value;
 
             /* insert on `HashSet` returns false if value is alreay in set */
