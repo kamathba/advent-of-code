@@ -1,5 +1,28 @@
 [[package]]
+name = "aoc1a"
+version = "0.1.0"
+
+[[package]]
+name = "aoc1b"
+version = "0.1.0"
+
+[[package]]
+name = "aoc2a"
+version = "0.1.0"
+
+[[package]]
+name = "aoc2b"
+version = "0.1.0"
+
+[[package]]
 name = "aoc3a"
+version = "0.1.0"
+dependencies = [
+ "nom 4.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "aoc3b"
 version = "0.1.0"
 dependencies = [
  "nom 4.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
