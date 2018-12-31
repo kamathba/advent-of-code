@@ -22,6 +22,40 @@
     How many units remain after fully reacting the polymer you scanned?
 */
 
+fn get_sequence_length(sequence: Vec<char>) -> usize {
+    let input_len = sequence.len();
+    let mut pos: usize = 0;
+    let mut output = String::new();
+
+    loop {
+        // We are done processing the input
+        if pos >= input_len {
+            break;
+        }
+
+        // Invariant going into next part of loop is that output is never empty
+        if output.is_empty() {
+            output.push(sequence[pos]);
+            pos += 1;
+            continue;
+        }
+
+        let last = output.pop().expect("Output is never empty") as u8;
+        let delta = (sequence[pos] as i8) - (last as i8);
+
+        if delta.abs() != 32 {
+            output.push(last as char);
+            output.push(sequence[pos]);
+            pos += 1;
+            continue;
+        }
+
+        pos += 1;
+    }
+
+    output.len()
+}
+
 const ALPHABET: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 fn main() -> Result<(), std::io::Error> {
@@ -33,39 +67,7 @@ fn main() -> Result<(), std::io::Error> {
             .filter(|&x| x != letter && x != letter.to_ascii_lowercase())
             .collect();
 
-        let mut output = String::new();
-
-        let input_len = sequence.len();
-        let mut pos: usize = 1;
-
-        output.push(sequence[0] as char);
-
-        loop {
-            // We are done processing the input
-            if pos >= input_len {
-                break;
-            }
-
-            // Invariant going into next part of loop is that output is never empty
-            if output.is_empty() {
-                output.push(sequence[pos]);
-                pos += 1;
-            }
-
-            let last = output.pop().expect("Output is never empty") as u8;
-            let delta = (sequence[pos] as i8) - (last as i8);
-
-            if delta.abs() != 32 {
-                output.push(last as char);
-                output.push(sequence[pos]);
-                pos += 1;
-                continue;
-            }
-
-            pos += 1;
-        }
-
-        let sequence_length = output.len();
+        let sequence_length = get_sequence_length(sequence);
         println!("{}: {}", letter, sequence_length);
         if sequence_length < min {
             min = sequence_length;
