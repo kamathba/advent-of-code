@@ -39,7 +39,12 @@ struct Point {
 struct Segment {
     p1: Point,
     p2: Point,
-    vertical: bool,
+}
+
+impl Segment {
+    fn vertical(&self) -> bool {
+        self.p1.x == self.p2.x
+    }
 }
 
 #[derive(Debug)]
@@ -74,41 +79,28 @@ fn segments_from_movements(moves: &[Movement], start: Point) -> Vec<Segment> {
     let mut ret = Vec::new();
 
     for movement in moves {
-        let (next, is_vertical) = match movement {
-            Movement::Up(spaces) => (
-                Point {
-                    x: current.x,
-                    y: current.y + *spaces,
-                },
-                true,
-            ),
-            Movement::Down(spaces) => (
-                Point {
-                    x: current.x,
-                    y: current.y - *spaces,
-                },
-                true,
-            ),
-            Movement::Left(spaces) => (
-                Point {
-                    x: current.x - *spaces,
-                    y: current.y,
-                },
-                false,
-            ),
-            Movement::Right(spaces) => (
-                Point {
-                    x: current.x + *spaces,
-                    y: current.y,
-                },
-                false,
-            ),
+        let next = match movement {
+            Movement::Up(spaces) => Point {
+                x: current.x,
+                y: current.y + *spaces,
+            },
+            Movement::Down(spaces) => Point {
+                x: current.x,
+                y: current.y - *spaces,
+            },
+            Movement::Left(spaces) => Point {
+                x: current.x - *spaces,
+                y: current.y,
+            },
+            Movement::Right(spaces) => Point {
+                x: current.x + *spaces,
+                y: current.y,
+            },
         };
 
         ret.push(Segment {
             p1: current,
             p2: next,
-            vertical: is_vertical,
         });
         current = next;
     }
@@ -125,17 +117,17 @@ fn find_intersections(segments1: &[Segment], segments2: &[Segment]) -> Vec<Point
 
     for outer in segments1 {
         for inner in segments2 {
-            if outer.vertical == inner.vertical {
+            if outer.vertical() == inner.vertical() {
                 continue;
             }
 
-            let (x, y) = if outer.vertical {
+            let (x, y) = if outer.vertical() {
                 (outer.p1.x, inner.p1.y)
             } else {
                 (inner.p1.x, outer.p1.y)
             };
 
-            if outer.vertical {
+            if outer.vertical() {
                 if intersects(x, inner.p1.x, inner.p2.x) && intersects(y, outer.p1.y, outer.p2.y) {
                     ret.push(Point { x, y });
                 }
@@ -153,7 +145,7 @@ fn distance_to_point(segments: &[Segment], point: Point) -> Option<i32> {
     let mut sum: i32 = 0;
 
     for segment in segments {
-        if segment.vertical {
+        if segment.vertical() {
             if point.x == segment.p1.x && intersects(point.y, segment.p1.y, segment.p2.y) {
                 return Some(sum + (point.y - segment.p1.y).abs());
             }
