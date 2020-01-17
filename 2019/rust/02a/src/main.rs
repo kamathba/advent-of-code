@@ -58,7 +58,7 @@ enum OpCode {
 
 fn main() -> std::io::Result<()> {
     let mut program: Vec<u32> = include_str!("../input")
-        .split(",")
+        .split(',')
         .map(|s| s.parse::<u32>().expect("Not an unsigned integer"))
         .collect();
 
