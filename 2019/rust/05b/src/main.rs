@@ -86,7 +86,7 @@ impl Terminal for CommandLineTerminal {
     }
 }
 
-fn execute_program(term: &mut dyn Terminal, program: &mut [i32]) {
+fn execute_program(term: &mut impl Terminal, program: &mut [i32]) {
     let mut pc: usize = 0;
 
     loop {
@@ -164,7 +164,6 @@ fn main() -> std::io::Result<()> {
 #[cfg(test)]
 mod tests {
     use super::{execute_program, Terminal};
-    use std::iter::FromIterator;
 
     #[derive(Default)]
     struct TestTerminal {
@@ -191,6 +190,47 @@ mod tests {
         assert_eq!(program[4], 99);
     }
 
+    fn execute_with_input(term: &mut TestTerminal, ro_program: &[i32], input: &str) {
+        use std::iter::FromIterator;
+
+        let mut program = Vec::from_iter(ro_program.iter().cloned());
+        term.inputs.push(String::from(input));
+        execute_program(&mut *term, &mut program);
+    }
+
+    #[test]
+    fn compare_program() {
+        let mut test_terminal = TestTerminal::default();
+
+        let equal_program = [3, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8];
+        execute_with_input(&mut test_terminal, &equal_program, "8\n");
+        assert_eq!(test_terminal.outputs.pop().expect("No outputs"), 1);
+
+        execute_with_input(&mut test_terminal, &equal_program, "101\n");
+        assert_eq!(test_terminal.outputs.pop().expect("No outputs"), 0);
+
+        let lessthan_program = [3, 9, 7, 9, 10, 9, 4, 9, 99, -1, 8];
+        execute_with_input(&mut test_terminal, &lessthan_program, "-100\n");
+        assert_eq!(test_terminal.outputs.pop().expect("No outputs"), 1);
+
+        execute_with_input(&mut test_terminal, &lessthan_program, "9\n");
+        assert_eq!(test_terminal.outputs.pop().expect("No outputs"), 0);
+
+        let immediateequal_program = [3, 3, 1108, -1, 8, 3, 4, 3, 99];
+        execute_with_input(&mut test_terminal, &immediateequal_program, "8\n");
+        assert_eq!(test_terminal.outputs.pop().expect("No outputs"), 1);
+
+        execute_with_input(&mut test_terminal, &immediateequal_program, "7\n");
+        assert_eq!(test_terminal.outputs.pop().expect("No outputs"), 0);
+
+        let immediatelessthan_program = [3, 3, 1107, -1, 8, 3, 4, 3, 99];
+        execute_with_input(&mut test_terminal, &immediatelessthan_program, "-100\n");
+        assert_eq!(test_terminal.outputs.pop().expect("No outputs"), 1);
+
+        execute_with_input(&mut test_terminal, &immediatelessthan_program, "9\n");
+        assert_eq!(test_terminal.outputs.pop().expect("No outputs"), 0);
+    }
+
     #[test]
     fn jump_program() {
         let mut test_terminal = TestTerminal::default();
@@ -200,22 +240,13 @@ mod tests {
             20, 1105, 1, 46, 98, 99,
         ];
 
-        let mut program: Vec<i32> = Vec::from_iter(ro_program.iter().cloned());
-        test_terminal.inputs.push(String::from("0\n"));
-        execute_program(&mut test_terminal, &mut program);
-
+        execute_with_input(&mut test_terminal, &ro_program, "0\n");
         assert_eq!(test_terminal.outputs.pop().expect("No outputs"), 999);
 
-        program = Vec::from_iter(ro_program.iter().cloned());
-        test_terminal.inputs.push(String::from("8\n"));
-        execute_program(&mut test_terminal, &mut program);
-
+        execute_with_input(&mut test_terminal, &ro_program, "8\n");
         assert_eq!(test_terminal.outputs.pop().expect("No outputs"), 1000);
 
-        program = Vec::from_iter(ro_program.iter().cloned());
-        test_terminal.inputs.push(String::from("9\n"));
-        execute_program(&mut test_terminal, &mut program);
-
+        execute_with_input(&mut test_terminal, &ro_program, "9\n");
         assert_eq!(test_terminal.outputs.pop().expect("No outputs"), 1001);
     }
 }
