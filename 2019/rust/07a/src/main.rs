@@ -178,11 +178,10 @@ fn main() -> std::io::Result<()> {
 
     let output = permutations_of(&[0, 1, 2, 3, 4])
         .map(|x| x.map(|&x| x as i32).collect::<Vec<i32>>())
-        .map(|x| thruster_output(&program, &x))
-        .max()
+        .max_by_key(|x| thruster_output(&program, &x))
         .expect("failed");
 
-    println!("Max thruster signal: {}", output);
+    println!("Max thruster code: {:?} = {}", output, thruster_output(&program, &output));
     Ok(())
 }
 
